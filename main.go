@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/noazaj/btc-pipeline/requests"
+	"github.com/noazaj/btc-pipeline/api"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		log.Printf("Error creating JSON data from source X: %v", err)
 	}
 
-	dataX, err := requests.XRequestAPI(bearerToken, os.Getenv("X_QUERY"), os.Getenv("X_URL"))
+	dataX, err := api.XRequestAPI(bearerToken, os.Getenv("X_QUERY"), os.Getenv("X_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
