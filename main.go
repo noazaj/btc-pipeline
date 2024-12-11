@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/noazaj/btc-pipeline/requests"
 )
 
 func main() {
@@ -25,36 +24,21 @@ func main() {
 		log.Fatal("Error setting API variables or Bearer token not initialized")
 	}
 
-	testRequest(bearerToken)
-
-}
-
-func testRequest(bearerToken string) {
-	query := "?query=bitcoin&max_results=5"
-	requestURL := fmt.Sprintf("https://api.x.com/2/tweets/search/all%s", query)
-
-	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	err = os.Mkdir("data", 0755)
 	if err != nil {
-		log.Printf("Client could not create request: %v\n", err)
-		os.Exit(1)
+		log.Printf("Error creating dir: %v", err)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", bearerToken))
-
-	res, err := http.DefaultClient.Do(req)
+	_, err = os.Create("x-data.json")
 	if err != nil {
-		log.Printf("Error making http request: %v\n", err)
-		os.Exit(1)
+		log.Printf("Error creating JSON data from source X: %v", err)
 	}
 
-	fmt.Printf("Got response code: %d\n\n", res.StatusCode)
-
-	resBody, err := io.ReadAll(res.Body)
+	dataX, err := requests.XRequestAPI(bearerToken, os.Getenv("X_QUERY"), os.Getenv("X_URL"))
 	if err != nil {
-		log.Printf("Error reading response body: %v", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
-	fmt.Printf("Raw response body: %v\n\nDecoded response body: %s", resBody, string(resBody))
+	fmt.Println(dataX)
+
 }
