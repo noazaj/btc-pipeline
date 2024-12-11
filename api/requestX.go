@@ -12,7 +12,6 @@ import (
 
 func XRequestAPI(bearerToken, query, url string) (string, error) {
 	requestURL := fmt.Sprintf("%s%s", url, query)
-	fmt.Println(requestURL)
 
 	var (
 		res *http.Response
